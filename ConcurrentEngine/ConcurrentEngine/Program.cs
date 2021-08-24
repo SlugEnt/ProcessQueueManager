@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Threading;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using SlugEnt;
 using Console = Colorful.Console;
 using Slugent.ProcessQueueManager;
 
@@ -14,7 +19,36 @@ namespace ConcurrentEngine
 		{
 			Console.WriteLine("Hello World!");
 
+			
+			// Setup Logging
+            Log.Logger = new LoggerConfiguration()
+                         .WriteTo.Console()
+                         .CreateLogger();
+
+            var serviceCollection = new ServiceCollection();
+            ConfigureServices(serviceCollection);
+
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            //serviceProvider.GetService<MyClass>().SomeMethod(); //in MyClass' constructor get 
+            //the logger by adding a parameter (ILogger<MyClass>)
+
+            var logger = serviceProvider.GetService<ILogger<Program>>();
+
+
+            logger.LogInformation("Log in Program.cs");
+
+
+
+
 			string [] taskIds = new [] {"Take Out Garbage", "Wash Dishes", "Clean Car", "Wash Laundry", "Dry Laundry", "Fold Laundry", "Make Dinner"};
+
+
+			// Periodic Tasks
+            DayTimeInterval dayTimeInterval = new DayTimeInterval("3am", "10pm");
+            TimeUnit checkInterval = new TimeUnit("1m");
+            PeriodicJob jobA = new PeriodicJob("JobA",JobAMethod,dayTimeInterval,checkInterval);
+
 
 
 			// Load tasks into Task Table
@@ -53,6 +87,12 @@ namespace ConcurrentEngine
 
 			int j = 0;
 		}
+
+
+        public static bool JobAMethod () {
+            int i = 22;
+            return true;
+        }
 
 
 		public static bool TaskWashCar(object a)
@@ -122,5 +162,14 @@ namespace ConcurrentEngine
 			Thread.Sleep(sleepTime);
 			return sleepTime;
 		}
+
+
+
+        private static void ConfigureServices(IServiceCollection services) {
+            services.AddLogging(configure => configure.AddSerilog());
+
+
+
+        }
 	}
 }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -6,6 +6,9 @@
 
   <ItemGroup>
     <PackageReference Include="Colorful.Console" Version="1.2.15" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Slugent.DayTimeInterval" Version="1.0.0-alpha-0003b" />
+    <PackageReference Include="SlugEnt.TimeUnit" Version="2.0.0" />
     <PackageReference Include="SmartThreadPool.NetCore" Version="2.3.0" />
   </ItemGroup>
 

@@ -71,15 +71,16 @@ namespace Slugent.ProcessQueueManager
 		/// </summary>
 		public DateTimeOffset KillTime { get; set; }
 
+
 		public Exception Exception { get; private set; }
 
 
 		/// <summary>
 		/// Constructs a new ProcessingTask
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="taskTypeId"></param>
-		/// <param name="taskSpeed"></param>
+		/// <param name="name">Descriptive Name of this task</param>
+		/// <param name="taskTypeId">Each specific type of task has its own id that identifies it.  This is not the operating Id (Id) which is incremented for each instance of a particular Task Type</param>
+		/// <param name="taskSpeed">How fast the task runs</param>
 		/// <param name="methodToRun"></param>
 		/// <param name="payload"></param>
 		public ProcessingTask (string name, int taskTypeId, EnumProcessingTaskSpeed taskSpeed, Func<object,bool> methodToRun , object payload = null) {
