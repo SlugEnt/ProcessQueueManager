@@ -28,7 +28,7 @@ namespace Test_ConcurrentEngine
 
 
             // Test 1:
-            PeriodicJob jobA = new PeriodicJob("JobA", JobMethodA_ReturnTrue, dayTimeInterval, checkInterval);
+            PeriodicJob jobA = new PeriodicJob("JobA", JobMethodA_ReturnTrue, dayTimeInterval, checkInterval, null);
             jobA.SetNextRunTime();
 
             // Validate
@@ -58,7 +58,7 @@ namespace Test_ConcurrentEngine
 
 
             // Test 1:
-            PeriodicJob jobA = new PeriodicJob("JobA", JobMethodA_ReturnTrue, dayTimeInterval, checkInterval);
+            PeriodicJob jobA = new PeriodicJob("JobA", JobMethodA_ReturnTrue, dayTimeInterval, checkInterval,null);
             jobA.SetNextRunTime();
 
             // Validate
@@ -74,7 +74,70 @@ namespace Test_ConcurrentEngine
         }
 
 
-        private bool JobMethodA_ReturnTrue () {
+        /// <summary>
+        /// Tests the IsTimeToRun method
+        /// </summary>
+        [Test]
+        public void IsTimeToRun_Success () {
+            // Prep
+            // Set an interval based upon current time.
+            DateTimeOffset current = DateTime.Now;
+            DateTimeOffset startDateTimeOffset = current;
+            string startHour = startDateTimeOffset.ToString("h tt");
+            int startHourNumeric = startDateTimeOffset.Hour;
+
+            string endHour = current.AddHours(5).ToString("h tt");
+            DayTimeInterval dayTimeInterval = new DayTimeInterval(startHour, endHour);
+
+            TimeUnit checkInterval = new TimeUnit("1h");
+
+
+            // Test 1:
+            PeriodicJob jobA = new PeriodicJob("JobA", JobMethodA_ReturnTrue, dayTimeInterval, checkInterval,null);
+            jobA.SetNextRunTime();
+
+            Assert.IsTrue(jobA.IsTimeToRun(),"A10:");
+        }
+
+
+
+
+        /// <summary>
+        /// Tests the IsTimeToRun method
+        /// </summary>
+        [Test]
+        [TestCase(-4,-1, Description = "Interval is before current time")]
+        [TestCase(4, 6,Description = "Interval is after current time")]
+
+        public void IsTimeToRun_ReturnsFalse(int startHours, int EndHours)
+        {
+            // Prep
+            // Set an interval based upon current time.
+            DateTimeOffset current = DateTime.Now;
+            DateTimeOffset startDateTimeOffset = current.AddHours(3);
+            string startHour = startDateTimeOffset.ToString("h tt");
+            int startHourNumeric = startDateTimeOffset.Hour;
+
+            string endHour = current.AddHours(5).ToString("h tt");
+            DayTimeInterval dayTimeInterval = new DayTimeInterval(startHour, endHour);
+
+            TimeUnit checkInterval = new TimeUnit("1h");
+
+
+            // Test 1:
+            PeriodicJob jobA = new PeriodicJob("JobA", JobMethodA_ReturnTrue, dayTimeInterval, checkInterval,null);
+            jobA.SetNextRunTime();
+
+            Assert.IsFalse(jobA.IsTimeToRun(), "A10:");
+        }
+
+
+
+        /// <summary>
+        /// Sample Method run by some of the jobs
+        /// </summary>
+        /// <returns></returns>
+        private bool JobMethodA_ReturnTrue (Action<ProcessingTask> addTaskMethod) {
             int j = 1;
             return true;
         }

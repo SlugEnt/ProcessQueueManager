@@ -11,7 +11,7 @@ using SlugEnt;
 using Console = Colorful.Console;
 using Slugent.ProcessQueueManager;
 
-namespace ConcurrentEngine
+namespace Sample
 {
 	class Program
 	{
@@ -19,27 +19,21 @@ namespace ConcurrentEngine
 		{
 			Console.WriteLine("Hello World!");
 
-			
-			// Setup Logging
-            Log.Logger = new LoggerConfiguration()
-                         .WriteTo.Console()
-                         .CreateLogger();
 
-            var serviceCollection = new ServiceCollection();
-            ConfigureServices(serviceCollection);
-
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-
-            //serviceProvider.GetService<MyClass>().SomeMethod(); //in MyClass' constructor get 
-            //the logger by adding a parameter (ILogger<MyClass>)
-
-            var logger = serviceProvider.GetService<ILogger<Program>>();
+            ConcurrentEngine concurrentEngine = new ConcurrentEngine();
 
 
-            logger.LogInformation("Log in Program.cs");
+			// Create list of Master Tasks
 
 
+			// Add all the periodic Tasks that need to be done.
 
+			// Job - Check for chores
+            DayTimeInterval dayTimeIntervalChores = new DayTimeInterval("4am", "8pm");
+            TimeUnit checkIntervalChores = new TimeUnit("1m");
+
+            PeriodicJob jobChoress = new PeriodicJob("Do Chores", DoChores, dayTimeIntervalChores, checkIntervalChores, concurrentEngine.AddTask);
+            
 
 			string [] taskIds = new [] {"Take Out Garbage", "Wash Dishes", "Clean Car", "Wash Laundry", "Dry Laundry", "Fold Laundry", "Make Dinner"};
 
@@ -47,7 +41,7 @@ namespace ConcurrentEngine
 			// Periodic Tasks
             DayTimeInterval dayTimeInterval = new DayTimeInterval("3am", "10pm");
             TimeUnit checkInterval = new TimeUnit("1m");
-            PeriodicJob jobA = new PeriodicJob("JobA",JobAMethod,dayTimeInterval,checkInterval);
+            PeriodicJob jobA = new PeriodicJob("JobA",JobAMethod,dayTimeInterval,checkInterval,concurrentEngine.AddTask);
 
 
 
@@ -72,7 +66,7 @@ namespace ConcurrentEngine
 				for ( i = 0; i < 10; i++ ) {
 					foreach ( ProcessingTask processingTask in masterTasks ) {
 						ProcessingTask t = processingTask.CloneTask(name);
-						fastQueue.AddTask(t, name);
+						fastQueue.AddTask(t);
 
 						//t.Execute();
 					}
@@ -89,7 +83,13 @@ namespace ConcurrentEngine
 		}
 
 
-        public static bool JobAMethod () {
+
+        public static bool DoChores (Action<ProcessingTask> addTaskMethod) {
+            return true;
+        }
+
+
+        public static bool JobAMethod (Action<ProcessingTask> addTaskMethod) {
             int i = 22;
             return true;
         }

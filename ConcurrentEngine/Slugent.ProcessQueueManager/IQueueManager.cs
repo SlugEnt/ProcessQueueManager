@@ -25,7 +25,7 @@ namespace Slugent.ProcessQueueManager
 
 		public Task Start ();
 
-		public bool AddTask<P> (ProcessingTask task, P payload);
+		public bool AddTask (ProcessingTask task);
 
 	}
 }

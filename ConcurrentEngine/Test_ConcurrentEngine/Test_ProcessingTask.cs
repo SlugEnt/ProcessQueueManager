@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ConcurrentEngine;
+using SlugEnt;
 using NUnit.Framework;
 using Slugent.ProcessQueueManager;
 

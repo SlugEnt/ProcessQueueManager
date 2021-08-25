@@ -41,10 +41,13 @@ namespace Slugent.ProcessQueueManager
 		public int MaxTaskRunTime { get; set; } = 4;
 
 
-		/// <summary>
-		/// Initiates the Queue to stop processing.  It will finish up items in the queue, stops accepting new items.
-		/// </summary>
-		public void StopProcessing () { _stopProcessing = true; }
+        /// <summary>
+        /// Initiates the Queue to stop processing.  It will finish up items in the queue, stops accepting new items.
+        /// </summary>
+        public void StopProcessing () {
+            _stopProcessing = true;
+			// TODO - Need to drain the waiting items from the queue.,
+        }
 
 
 		/// <summary>
@@ -110,7 +113,9 @@ namespace Slugent.ProcessQueueManager
 		/// Adds the given task to the queue of items to be executed.
 		/// </summary>
 		/// <param name="task"></param>
-		public bool AddTask<P> (ProcessingTask task, P payload ) {
+		//public bool AddTask<P> (ProcessingTask task, P payload ) {
+        public bool AddTask(ProcessingTask task)
+        {
 			//if ( waitingTasks.Count > MaxParallelTasksCount ) return false;
 			if ( _stopProcessing ) return false;
 

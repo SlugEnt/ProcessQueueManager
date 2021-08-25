@@ -59,14 +59,28 @@ namespace Slugent.ProcessQueueManager
         /// <summary>
         /// The method that will be run
         /// </summary>
-        private Func<bool> MethodToRun { get; set; }
+        private Func<Action<ProcessingTask>,bool> MethodToRun { get; set; }
 
 
-        public PeriodicJob (string name, Func<bool> methodToRun, ILogger<PeriodicJob> logger = null)
+        /// <summary>
+        /// External method used to add a processing task to be run.
+        /// </summary>
+        private Action<ProcessingTask> AddTask { get; set; }
+
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="methodToRun"></param>
+        /// <param name="addTaskMethod"></param>
+        /// <param name="logger"></param>
+        public PeriodicJob (string name, Func<Action<ProcessingTask>,bool> methodToRun, Action<ProcessingTask> addTaskMethod,ILogger<PeriodicJob> logger = null)
         {
             _id++;
             Name = name;
             MethodToRun = methodToRun;
+            AddTask = addTaskMethod;
             _logger = logger;
         }
 
@@ -78,7 +92,7 @@ namespace Slugent.ProcessQueueManager
         /// <param name="methodToRun">The method that should be run</param>
         /// <param name="allowedInterval">The DayTimeInterval that the job is allowed to run within</param>
         /// <param name="checkInterval">How often the job should be run.  So the time between one run ending and the next starting.</param>
-        public PeriodicJob(string name, Func<bool> methodToRun, DayTimeInterval allowedInterval, TimeUnit checkInterval, ILogger<PeriodicJob> logger = null) :this(name, methodToRun, logger)
+        public PeriodicJob(string name, Func<Action<ProcessingTask>,bool> methodToRun, DayTimeInterval allowedInterval, TimeUnit checkInterval, Action<ProcessingTask> addTaskMethod, ILogger<PeriodicJob> logger = null) :this(name, methodToRun, addTaskMethod,logger)
         {
             AllowedInterval = allowedInterval;
             CheckInterval = checkInterval;
@@ -91,8 +105,10 @@ namespace Slugent.ProcessQueueManager
         /// <returns></returns>
         public bool IsTimeToRun ()
         {
-            DateTime x = DateTime.Now;
-            if (AllowedInterval.IsInInterval(x))
+            DateTimeOffset current = DateTimeOffset.Now;
+            if ( !(current > NextRunTime) ) return false;
+
+            if (AllowedInterval.IsInInterval(current))
                 return true;
             return false;
         }
@@ -132,7 +148,7 @@ namespace Slugent.ProcessQueueManager
             _runCount++;
             //_logger.LogInformation("Starting - " + Name);
             try {
-                bool success = MethodToRun();
+                bool success = MethodToRun(AddTask);
             }
             catch ( Exception e ) {
 
