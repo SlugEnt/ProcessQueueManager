@@ -8,6 +8,9 @@ using Console = Colorful.Console;
 
 namespace SlugEnt.ProcessQueueManager
 {
+	/// <summary>
+	/// A processing queue that can run 1..n tasks in parallel.  It will have a maximum run time, after which any task that exceeds will be killed.
+	/// </summary>
     public class QueueManager : IQueueManager {
 		private int _runningTasksCount = 0;
         private ulong _tasksCompletedCount = 0;
@@ -38,6 +41,9 @@ namespace SlugEnt.ProcessQueueManager
 		public int MaxTaskRunTime { get; set; } = 4;
 
 
+		/// <summary>
+		/// Number of tasks that the queue has completed.
+		/// </summary>
 		public ulong TasksCompletedCount {
             get { return _tasksCompletedCount;} }
 
@@ -61,11 +67,17 @@ namespace SlugEnt.ProcessQueueManager
 			}
 		}
 
+		/// <summary>
+		/// Number of items in the waiting queue
+		/// </summary>
 		public int QueueCount {
 			get { return waitingTasks.Count; }
 		}
 
 
+		/// <summary>
+		/// True if the queue is ready to receive tasks
+		/// </summary>
 		public bool IsReadyToReceiveTasks { get; set; }
 
 		/// <summary>
@@ -122,6 +134,11 @@ namespace SlugEnt.ProcessQueueManager
 		}
 
 
+		/// <summary>
+		/// Runs a given task in a thread.
+		/// </summary>
+		/// <param name="processingTask">Task to be run</param>
+		/// <returns></returns>
 		private async Task ExecuteTask (ProcessingTask processingTask) {
             try {
                 Interlocked.Increment(ref _runningTasksCount);
@@ -151,7 +168,7 @@ namespace SlugEnt.ProcessQueueManager
 		/// <summary>
 		/// Executes the given task.  
 		/// </summary>
-		/// <param name="state"></param>
+		/// <param name="state">The processing task to be run</param>
 		/// <returns></returns>
         private object RunTask (object state) {
             ProcessingTask t = (ProcessingTask) state;

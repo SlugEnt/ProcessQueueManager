@@ -1,10 +1,15 @@
-﻿using SlugEnt.ProcessQueueManager;
+﻿using System;
+using SlugEnt.ProcessQueueManager;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SlugEnt
 {
+    /// <summary>
+    /// An engine that can process jobs which contain one or more tasks that can be scheduled to run in one of 3 different parallel
+    /// processing queues (fast, medium and slow)
+    /// </summary>
     public class ConcurrentEngine {
         private Thread _loopThread;
 		private bool _continueRunning;
@@ -14,9 +19,15 @@ namespace SlugEnt
         private QueueManager _slowQueue;
 
 
+        /// <summary>
+        /// The total number of tasks that have been requested to be processed.
+        /// </summary>
         public ulong TasksAdded { get; private set; }
 
 
+        /// <summary>
+        /// The total number of tasks that have been completed
+        /// </summary>
         public ulong TasksCompleted {
             get {
                 ulong total = 0;
@@ -42,34 +53,52 @@ namespace SlugEnt
 
 		private Dictionary<int,PeriodicJob> Jobs = new Dictionary<int,PeriodicJob>();
 
+
+        /// <summary>
+        /// Returns the number of jobs currently in the engine queue
+        /// </summary>
         public int JobCount {
             get { return Jobs.Count; }
         }
         
 
-
-
-
+        /// <summary>
+        /// Returns a list of all the jobs
+        /// </summary>
         public IReadOnlyDictionary<int,PeriodicJob> JobsList {
             get { return Jobs; }
         }
 
 
+        /// <summary>
+        /// Maximum number of tasks that can be run in parallel for the fast or short running tasks queue.
+        /// </summary>
         public byte MaxThreadsFast { get; set; } = 5;
+
+
+        /// <summary>
+        /// Maximum number of tasks that can be run in parallel for the slow or long running tasks queue.
+        /// </summary>
         public byte MaxThreadsSlow { get; set; } = 2;
+
+        /// <summary>
+        /// Maximum number of Tasks that can be run in parallel for the medium processing queue
+        /// </summary>
         public byte MaxThreadsMedium { get; set; } = 3;
 
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
 		public ConcurrentEngine () {
 			 InitializeQueues();
 		}
 
+        
 
-		public void Initialize () {
-
-		}
-
-
+        /// <summary>
+        /// Sets the Queues up
+        /// </summary>
         private void InitializeQueues () {
             // Create Queue's if they do not exist
             if (_fastQueue == null) _fastQueue = new QueueManager("Fast Job Queue", MaxThreadsFast);
@@ -78,6 +107,10 @@ namespace SlugEnt
         }
 
 
+
+        /// <summary>
+        /// Starts the engine.  It can immediately begin accepting and executing jobs
+        /// </summary>
         public void Start () {
             if ( Status != EnumConcurrentEngineStatus.Stopped ) return;
             Status = EnumConcurrentEngineStatus.Starting;
@@ -138,9 +171,9 @@ namespace SlugEnt
 
 
         /// <summary>
-        /// Determines if the queue can be shut down.  If it is empty it can be shut down.  It will be set to null and true is returned.
+        /// Determines if the specified queue can be shut down.  If it is empty it can be shut down.  It will be set to null and true is returned.
         /// </summary>
-        /// <param name="q"></param>
+        /// <param name="q">The queue to be checked</param>
         /// <returns></returns>
         private bool CanStopQueue (QueueManager q) {
             if ( q == null ) return true; 
@@ -156,15 +189,37 @@ namespace SlugEnt
             return false;
         }
 
+
         /// <summary>
         /// Adds a Job to the Execution Engine
         /// </summary>
-        /// <param name="periodicJob"></param>
+        /// <param name="periodicJob">Periodic Job to be added to the engine's queue</param>
         public void AddJob (PeriodicJob periodicJob) {
 			Jobs.Add(periodicJob.Id,periodicJob);
         }
 
 
+        /// <summary>
+        /// Creates a job and then adds it to the processing queue
+        /// </summary>
+        /// <param name="name">Name of the job</param>
+        /// <param name="methodToRun">The method from the application that should be run when the job needs to run</param>
+        /// <param name="intervalStartTime">A time in a format acceptable for DayTimeInterval, ex:  2pm</param>
+        /// <param name="intervalEndTime">A time in a format acceptable for DayTimeInterval, ex: 9am</param>
+        /// <param name="checkInterval">A time period in a format acceptable for a TimeUnit, ex: 12m, or 2h or 3s, etc</param>
+        public void AddNewJob (string name, Func<Action<ProcessingTask>, bool> methodToRun, string intervalStartTime, string intervalEndTime, string checkInterval) {
+
+            DayTimeInterval dayTimeInterval = new DayTimeInterval(intervalStartTime,intervalEndTime);
+            TimeUnit timeCheckInterval = new TimeUnit(checkInterval);
+            PeriodicJob jobEatBreakfast = new PeriodicJob(name, methodToRun, dayTimeInterval,timeCheckInterval,AddTask);
+
+        }
+
+
+        /// <summary>
+        /// Adds a task to be executed to the appropriate queue
+        /// </summary>
+        /// <param name="processingTask"></param>
         public void AddTask (ProcessingTask processingTask) {
             if ( processingTask.TaskSpeed == EnumProcessingTaskSpeed.Fast ) _fastQueue.AddTask(processingTask);
             else if ( processingTask.TaskSpeed == EnumProcessingTaskSpeed.Moderate )
@@ -176,6 +231,7 @@ namespace SlugEnt
 
             //Tasks.Add(processingTask.Name,processingTask);
         }
+
 
 	}
 }

@@ -18,7 +18,9 @@ namespace SlugEnt.ProcessQueueManager
 		/// </summary>
 		public string Name { get; set; }
 
-
+		/// <summary>
+		/// Unique ID of the job. This is automatically set by the constructor
+		/// </summary>
 		public long Id { get; private set; }
 
 
@@ -68,6 +70,9 @@ namespace SlugEnt.ProcessQueueManager
 		public DateTimeOffset KillTime { get; set; }
 
 
+		/// <summary>
+		/// The exception that was generated when the task attempted to run.
+		/// </summary>
 		public Exception Exception { get; private set; }
 
 
@@ -77,8 +82,8 @@ namespace SlugEnt.ProcessQueueManager
 		/// <param name="name">Descriptive Name of this task</param>
 		/// <param name="taskTypeId">Each specific type of task has its own id that identifies it.  This is not the operating Id (Id) which is incremented for each instance of a particular Task Type</param>
 		/// <param name="taskSpeed">How fast the task runs</param>
-		/// <param name="methodToRun"></param>
-		/// <param name="payload"></param>
+		/// <param name="methodToRun">The method that is run to actually perform the task</param>
+		/// <param name="payload">An object that is passed to the methodToRun</param>
 		public ProcessingTask (string name, int taskTypeId, EnumProcessingTaskSpeed taskSpeed, Func<object,bool> methodToRun , object payload = null) {
 			Id = ++_uniqueID;
 			Name = name;
@@ -140,7 +145,7 @@ namespace SlugEnt.ProcessQueueManager
 		/// <summary>
 		/// Creates a clone of the current task.  Status of new task is set to created.  
 		/// </summary>
-		/// <param name="payload"></param>
+		/// <param name="payload">An object that should be stored as the payload for the created task</param>
 		/// <returns></returns>
 		public ProcessingTask CloneTask (object payload = null) {
 			ProcessingTask task = new ProcessingTask(this.Name,this.TaskTypeId,this.TaskSpeed,this.MethodToExecute,payload);
@@ -150,14 +155,13 @@ namespace SlugEnt.ProcessQueueManager
 
 
 		/// <summary>
-		/// Creates a reference task, which is a task that operational tasks are cloned from.
+		/// Creates a reference task, which is a task that operational tasks are cloned from.  A reference task cannot be run.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="taskTypeId"></param>
-		/// <param name="taskSpeed"></param>
-		/// <param name="methodToRun"></param>
-		/// <param name="payload"></param>
-		/// <returns></returns>
+		/// <param name="name">Name of the task</param>
+		/// <param name="taskTypeId">Unique id that identifies the type of task</param>
+		/// <param name="taskSpeed">How much time this task needs to run</param>
+		/// <param name="methodToRun">The method that should be called to perform the actual processing of the task </param>
+        /// <returns></returns>
 		public static ProcessingTask CreateReferenceTask (string name,
 		                                                  int taskTypeId,
 											                  EnumProcessingTaskSpeed taskSpeed,

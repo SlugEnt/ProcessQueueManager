@@ -7,7 +7,9 @@ using System.Runtime.CompilerServices;
 namespace SlugEnt.ProcessQueueManager
 {
 
-
+    /// <summary>
+    /// A job that is run periodically.  A job should be very short lived.  If the job needs to run for more than a second or 2, it should spawn a task to perform its main processing.
+    /// </summary>
     public class PeriodicJob
     {
         private static int _id;
@@ -24,7 +26,7 @@ namespace SlugEnt.ProcessQueueManager
         /// <summary>
         /// Unique ID that identifies this Periodic Job.
         /// </summary>
-        public int Id { get {  return _id; }  }
+        public int Id { get; private set; }
 
 
         /// <summary>
@@ -66,13 +68,13 @@ namespace SlugEnt.ProcessQueueManager
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="methodToRun"></param>
-        /// <param name="addTaskMethod"></param>
-        /// <param name="logger"></param>
+        /// <param name="name">Job Name</param>
+        /// <param name="methodToRun">The method from the main app that will be used to run this job.  This method should be short running</param>
+        /// <param name="addTaskMethod">The method that the job can use to add a task to one of the queues</param>
+        /// <param name="logger">The logger</param>
         public PeriodicJob (string name, Func<Action<ProcessingTask>,bool> methodToRun, Action<ProcessingTask> addTaskMethod,ILogger<PeriodicJob> logger = null)
         {
-            _id++;
+            Id = ++_id;
             Name = name;
             MethodToRun = methodToRun;
             AddTask = addTaskMethod;
@@ -110,9 +112,6 @@ namespace SlugEnt.ProcessQueueManager
 
 
 
-        public void ForceRun () { }
-
-
         /// <summary>
         /// Determines what the next run time will be.
         /// </summary>
@@ -134,6 +133,7 @@ namespace SlugEnt.ProcessQueueManager
             // Set next run time to start time of the interval
             NextRunTime = AllowedInterval.GetNextIntervalStartDateTimeOffset();
         }
+
 
 
         /// <summary>

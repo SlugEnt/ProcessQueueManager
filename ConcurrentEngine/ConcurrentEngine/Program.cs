@@ -4,19 +4,26 @@ using SlugEnt;
 using SlugEnt.ProcessQueueManager;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using Console = Colorful.Console;
 
-namespace Sample
+namespace Sample.ConcurEngine
 {
     class Program
 	{
+		//public static List<ProcessingTask> _masterTasks = new List<ProcessingTask>();
+        public static MasterTasks _masterTasks = new MasterTasks();
+
+
 		static async Task Main(string[] args)
 		{
 			Console.WriteLine("Hello World!");
 
+			Console.WriteLine("Engine New");
+			Example_New();
 			/*
 
 			*/
@@ -25,25 +32,40 @@ namespace Sample
 
         private static void Example_New () {
             ConcurrentEngine concurrentEngine = new ConcurrentEngine();
+			
+            
+            // Load tasks into Task Table
+            int i = 0;
+			_masterTasks.Add(EnumTaskIDs.TakeOutGarbage,EnumProcessingTaskSpeed.Fast,TaskTakeOutGarbage);
+            _masterTasks.Add(EnumTaskIDs.WashDishes, EnumProcessingTaskSpeed.Slow, TaskWashDishes);
+            _masterTasks.Add(EnumTaskIDs.WashCar, EnumProcessingTaskSpeed.Slow, TaskWashCar);
+            _masterTasks.Add(EnumTaskIDs.WashLaundry, EnumProcessingTaskSpeed.Slow, TaskLaundryWashed);
+            _masterTasks.Add(EnumTaskIDs.DryLaundry, EnumProcessingTaskSpeed.Fast, TaskLaundryDried);
+            _masterTasks.Add(EnumTaskIDs.FoldLaundry, EnumProcessingTaskSpeed.Moderate, TaskLaundryFolder);
+            _masterTasks.Add(EnumTaskIDs.EatDinner, EnumProcessingTaskSpeed.Moderate, TaskDinner);
+            _masterTasks.Add(EnumTaskIDs.EatBreakfast, EnumProcessingTaskSpeed.Fast, Task_EatBreakfast);
 
-            // First we define jobs.
 
-            // Job - Check for chores
-            DayTimeInterval dayTimeIntervalChores = new DayTimeInterval("4am", "8pm");
+            concurrentEngine.Start();
+
+
+			// First we define jobs.
+			// 2 ways, define the Job and required parameters and manually add to the engine's jobs or in a single call.
+
+			// Job - Check for chores
+			DayTimeInterval dayTimeIntervalChores = new DayTimeInterval("4am", "8pm");
             TimeUnit checkIntervalChores = new TimeUnit("1m");
-            PeriodicJob jobChoress = new PeriodicJob("Do Chores", DoChores, dayTimeIntervalChores, checkIntervalChores, concurrentEngine.AddTask);
+            PeriodicJob jobChoress = new PeriodicJob("Do Chores", JobMethod_DoChores, dayTimeIntervalChores, checkIntervalChores, concurrentEngine.AddTask);
+            concurrentEngine.AddJob(jobChoress);
 
 
-			// Job - Check for 
+			// Single call method:
+			concurrentEngine.AddNewJob("Eat Breakfast", JobMethod_EatBreakfast, "2am","10pm","1m");
 
+			while (true) {Thread.Sleep(1000);}
+			concurrentEngine.Stop();
 
-
-            // Periodic Tasks
-            DayTimeInterval dayTimeInterval = new DayTimeInterval("3am", "10pm");
-            TimeUnit checkInterval = new TimeUnit("1m");
-            PeriodicJob jobA = new PeriodicJob("JobA", JobAMethod, dayTimeInterval, checkInterval, concurrentEngine.AddTask);
-
-		}
+        }
 
 
 
@@ -95,13 +117,22 @@ namespace Sample
 
 
 
-		public static bool DoChores (Action<ProcessingTask> addTaskMethod) {
+		public static bool JobMethod_DoChores (Action<ProcessingTask> addTaskMethod) {
+            ProcessingTask task = _masterTasks.Clone(EnumTaskIDs.WashCar,"Porsche");
+            addTaskMethod(task);
+			return true;
+        }
+
+
+        public static bool JobMethod_EatBreakfast (Action<ProcessingTask> addTaskMethod) {
+			ProcessingTask task = _masterTasks.Clone(EnumTaskIDs.EatBreakfast, "Western Omelete");
+			addTaskMethod(task);
             return true;
         }
 
 
-        public static bool JobAMethod (Action<ProcessingTask> addTaskMethod) {
-            int i = 22;
+        public static bool Task_EatBreakfast (object a) {
+			Console.WriteLine("Eating Breakfast: [ "+ a.ToString() + " ]");
             return true;
         }
 
@@ -110,7 +141,7 @@ namespace Sample
 		{
 			Thread.Sleep(1500);
 			int sleep = RandomSleep(15);
-			Console.WriteLine("Car Washed by {0} - slept: {1}", a.ToString(), sleep);
+			Console.WriteLine("Wash the {0} - slept: {1}", a.ToString(), sleep);
 			return true;
 		}
 
