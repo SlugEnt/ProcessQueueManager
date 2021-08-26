@@ -1,19 +1,16 @@
-﻿using System;
+﻿using Amib.Threading;
+using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Amib.Threading;
-using Amib.Threading.Internal;
 using Console = Colorful.Console;
 
-namespace Slugent.ProcessQueueManager
+namespace SlugEnt.ProcessQueueManager
 {
-	public class QueueManager : IQueueManager {
+    public class QueueManager : IQueueManager {
 		private int _runningTasksCount = 0;
+        private ulong _tasksCompletedCount = 0;
 		private bool _stopProcessing = false;
 		private SmartThreadPool _threadPool = new SmartThreadPool();
         private IWorkItemsGroup _poolGroup;
@@ -39,6 +36,10 @@ namespace Slugent.ProcessQueueManager
 		/// Maximum amount of seconds a task can run before it will be killed.
 		/// </summary>
 		public int MaxTaskRunTime { get; set; } = 4;
+
+
+		public ulong TasksCompletedCount {
+            get { return _tasksCompletedCount;} }
 
 
         /// <summary>
@@ -92,19 +93,16 @@ namespace Slugent.ProcessQueueManager
 
 			while ( !_stopProcessing ) {
 				// Do we have capacity to run more parellel items?
-				while ( _runningTasksCount < MaxParallelTasksCount)
-				{
-					// Are there items waiting to be processed
-					if ( waitingTasks.Count > 0 ) {
-						// Pull item off Queue, add to running tasks and start the process.
-						if ( waitingTasks.TryDequeue(out ProcessingTask processingTask) ) {
-							_ = ExecuteTask(processingTask);
-						}
-					}
-				}
+                while ( _runningTasksCount < MaxParallelTasksCount && waitingTasks.Count > 0) {
+                    // Are there items waiting to be processed
+                    if ( waitingTasks.Count > 0 ) {
+                        // Pull item off Queue, add to running tasks and start the process.
+                        if ( waitingTasks.TryDequeue(out ProcessingTask processingTask) ) { _ = ExecuteTask(processingTask); }
+                    }
+                }
+                Console.Write(Name[0], Color.DarkOrange);
+                Thread.Sleep(50);
 
-				Console.Write("F",Color.DarkOrange);
-				Thread.Sleep(50);
 			}
 		}
 
@@ -125,22 +123,29 @@ namespace Slugent.ProcessQueueManager
 
 
 		private async Task ExecuteTask (ProcessingTask processingTask) {
-			try {
-				Interlocked.Increment(ref _runningTasksCount);
-				if ( !_runningTasks.TryAdd(processingTask.Id, processingTask) ) {
-					Console.WriteLine("Failed to add the task [{0}: {1}] to the internal Dictionary.  This means this task has already been added to the dictionary previously.  This should never happen",processingTask.Name,processingTask.Id);
-					return;
-				}
+            try {
+                Interlocked.Increment(ref _runningTasksCount);
+                if ( !_runningTasks.TryAdd(processingTask.Id, processingTask) ) {
+                    Console.WriteLine(
+                        "Failed to add the task [{0}: {1}] to the internal Dictionary.  This means this task has already been added to the dictionary previously.  This should never happen",
+                        processingTask.Name, processingTask.Id);
+                    return;
+                }
 
 
-				IWorkItemResult result = _poolGroup.QueueWorkItem(new WorkItemCallback(this.RunTask),processingTask);
-				return;
+                IWorkItemResult result = _poolGroup.QueueWorkItem(new WorkItemCallback(this.RunTask), processingTask);
+                return;
 
+            }
+
+            catch ( Exception e ) { Console.WriteLine("Task threw an error - {0}", e.ToString()); }
+            finally {
+                Interlocked.Decrement(ref _runningTasksCount);
+                Interlocked.Increment(ref _tasksCompletedCount);
 			}
 
-			catch ( Exception e ) { Console.WriteLine("Task threw an error - {0}" , e.ToString());}
-			finally { Interlocked.Decrement(ref _runningTasksCount); }
-		}
+            
+        }
 
 
 		/// <summary>

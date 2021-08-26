@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Slugent.ProcessQueueManager\Slugent.ProcessQueueManager.csproj" />
+    <ProjectReference Include="..\Slugent.ProcessQueueManager\ProcessQueueManager.csproj" />
   </ItemGroup>
 
 </Project>

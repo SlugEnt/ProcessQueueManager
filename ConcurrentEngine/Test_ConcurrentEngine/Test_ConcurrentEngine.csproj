@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ConcurrentEngine\ConcurrentEngine.csproj" />
-    <ProjectReference Include="..\Slugent.ProcessQueueManager\Slugent.ProcessQueueManager.csproj" />
+    <ProjectReference Include="..\Slugent.ProcessQueueManager\ProcessQueueManager.csproj" />
   </ItemGroup>
 
 </Project>

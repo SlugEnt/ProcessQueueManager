@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit;
-using NUnit.Framework;
-
-using Slugent.ProcessQueueManager;
+﻿using NUnit.Framework;
 using SlugEnt;
+using SlugEnt.ProcessQueueManager;
+using System;
 
 namespace Test_ConcurrentEngine
 {

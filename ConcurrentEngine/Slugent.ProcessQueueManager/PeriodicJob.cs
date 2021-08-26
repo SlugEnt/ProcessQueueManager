@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SlugEnt;
 
 [assembly: InternalsVisibleTo("Test_ConcurrentEngine")]
 
-namespace Slugent.ProcessQueueManager
+namespace SlugEnt.ProcessQueueManager
 {
-    
+
 
     public class PeriodicJob
     {
@@ -144,7 +139,7 @@ namespace Slugent.ProcessQueueManager
         /// <summary>
         /// Runs the method MethodToRun.  All errors are swallowed within this routine.
         /// </summary>
-        protected internal void Execute () {
+        async protected internal void Execute () {
             _runCount++;
             //_logger.LogInformation("Starting - " + Name);
             try {
