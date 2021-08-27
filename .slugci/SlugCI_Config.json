@@ -1,0 +1,35 @@
+{
+  "ConfigStructureVersion": "0.32.0",
+  "UseCodeCoverage": true,
+  "CodeCoverageThreshold": 90,
+  "DeployProdRoot": null,
+  "DeployAlphaRoot": null,
+  "DeployBetaRoot": null,
+  "DeployDevRoot": null,
+  "DeployToVersionedFolder": true,
+  "DeployFolderUsesSemVer": true,
+  "DeployToAssemblyFolders": false,
+  "GitRemote": null,
+  "AngularDeployRootName": null,
+  "Projects": [
+    {
+      "Name": "ConcurrentEngine",
+      "Deploy": "None",
+      "HasTypeWriterScripts": false,
+      "IsTestProject": false
+    },
+    {
+      "Name": "Test_ConcurrentEngine",
+      "Deploy": "None",
+      "HasTypeWriterScripts": false,
+      "IsTestProject": true
+    },
+    {
+      "Name": "ProcessQueueManager",
+      "Deploy": "Nuget",
+      "HasTypeWriterScripts": false,
+      "IsTestProject": false
+    }
+  ],
+  "AngularProjects": []
+}

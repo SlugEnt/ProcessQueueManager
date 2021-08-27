@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="coverlet.msbuild" Version="3.0.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
     <PackageReference Include="NUnit" Version="3.13.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
@@ -16,8 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ConcurrentEngine\ConcurrentEngine.csproj" />
-    <ProjectReference Include="..\Slugent.ProcessQueueManager\ProcessQueueManager.csproj" />
+    <ProjectReference Include="..\..\src\Slugent.ProcessQueueManager\ProcessQueueManager.csproj" />
   </ItemGroup>
 
 </Project>
