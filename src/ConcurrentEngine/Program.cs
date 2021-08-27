@@ -34,7 +34,7 @@ namespace Sample.ConcurEngine
             ConcurrentEngine concurrentEngine = new ConcurrentEngine();
 			
             
-            // Load tasks into Task Table
+            // Load tasks into a Master Task Table.  These are all reference tasks
             int i = 0;
 			_masterTasks.Add(EnumTaskIDs.TakeOutGarbage,EnumProcessingTaskSpeed.Fast,TaskTakeOutGarbage);
             _masterTasks.Add(EnumTaskIDs.WashDishes, EnumProcessingTaskSpeed.Slow, TaskWashDishes);
@@ -52,14 +52,14 @@ namespace Sample.ConcurEngine
 			// First we define jobs.
 			// 2 ways, define the Job and required parameters and manually add to the engine's jobs or in a single call.
 
-			// Job - Check for chores
+			// Method 1:  Job - Check for chores
 			DayTimeInterval dayTimeIntervalChores = new DayTimeInterval("4am", "8pm");
             TimeUnit checkIntervalChores = new TimeUnit("1m");
             PeriodicJob jobChoress = new PeriodicJob("Do Chores", JobMethod_DoChores, dayTimeIntervalChores, checkIntervalChores, concurrentEngine.AddTask);
             concurrentEngine.AddJob(jobChoress);
 
 
-			// Single call method:
+			// Method 2:  Single call method:
 			concurrentEngine.AddNewJob("Eat Breakfast", JobMethod_EatBreakfast, "2am","10pm","1m");
 
 			while (true) {Thread.Sleep(1000);}
