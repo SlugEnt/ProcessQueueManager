@@ -10,7 +10,8 @@
     <Copyright>Scott Herrmann 2021</Copyright>	  
     <RepositoryUrl>https://github.com/SlugEnt/ProcessQueueManager</RepositoryUrl>	  
     <RepositoryType>git</RepositoryType>	  
-    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>	  
+    <PackageId>SlugEnt.ProcessQueueManager</PackageId>
   </PropertyGroup>
 
 	    
