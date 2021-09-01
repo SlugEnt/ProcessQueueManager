@@ -112,7 +112,7 @@ namespace SlugEnt.ProcessQueueManager
                         if ( waitingTasks.TryDequeue(out ProcessingTask processingTask) ) { _ = ExecuteTask(processingTask); }
                     }
                 }
-                Console.Write(Name[0], Color.DarkOrange);
+                //Console.Write(Name[0], Color.DarkOrange);
                 Thread.Sleep(50);
 
 			}

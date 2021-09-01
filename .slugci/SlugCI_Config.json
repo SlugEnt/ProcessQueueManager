@@ -1,5 +1,5 @@
 {
-  "ConfigStructureVersion": "0.32.0",
+  "ConfigStructureVersion": "0.33.0",
   "UseCodeCoverage": true,
   "CodeCoverageThreshold": 90,
   "DeployProdRoot": null,
@@ -27,6 +27,12 @@
     {
       "Name": "ProcessQueueManager",
       "Deploy": "Nuget",
+      "HasTypeWriterScripts": false,
+      "IsTestProject": false
+    },
+    {
+      "Name": "ConsoleApp",
+      "Deploy": "None",
       "HasTypeWriterScripts": false,
       "IsTestProject": false
     }

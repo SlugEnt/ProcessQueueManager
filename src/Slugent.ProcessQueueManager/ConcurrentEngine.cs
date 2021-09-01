@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SlugEnt
+namespace SlugEnt.ProcessQueueManager
 {
     /// <summary>
     /// An engine that can process jobs which contain one or more tasks that can be scheduled to run in one of 3 different parallel
