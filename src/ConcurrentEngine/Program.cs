@@ -65,10 +65,10 @@ namespace ConsoleApp
 */
             // Method 2:  Single call method:
             concurrentEngine.AddNewJob("Eat Breakfast", JobMethod_EatBreakfast, "2am","10pm","3s");
+            concurrentEngine.AddNewJob("Do Chores", JobMethod_DoChores, "2am", "10pm", "6s");
 
-			while (true) {Thread.Sleep(1000);}
+            while (true) {Thread.Sleep(1000);}
 			concurrentEngine.Stop();
-
         }
 
 

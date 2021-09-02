@@ -211,8 +211,8 @@ namespace SlugEnt.ProcessQueueManager
 
             DayTimeInterval dayTimeInterval = new DayTimeInterval(intervalStartTime,intervalEndTime);
             TimeUnit timeCheckInterval = new TimeUnit(checkInterval);
-            PeriodicJob jobEatBreakfast = new PeriodicJob(name, methodToRun, dayTimeInterval,timeCheckInterval,AddTask);
-
+            PeriodicJob job = new PeriodicJob(name, methodToRun, dayTimeInterval,timeCheckInterval,AddTask);
+            AddJob(job);
         }
 
 
