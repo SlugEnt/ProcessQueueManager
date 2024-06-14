@@ -9,6 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test_ConcurrentEngine", "Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessQueueManager", "Slugent.ProcessQueueManager\ProcessQueueManager.csproj", "{86AB7583-6C36-40E5-BEF0-662A6F16032E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A22E1E13-13ED-44F9-8D3A-E782CD81B044}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Scripts\PushToNuget_Local.cmd = ..\..\Scripts\PushToNuget_Local.cmd
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

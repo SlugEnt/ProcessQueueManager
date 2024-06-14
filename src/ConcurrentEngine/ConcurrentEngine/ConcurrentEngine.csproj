@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
-    <AssemblyVersion>1.0.0.41</AssemblyVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyVersion>1.0.4.0</AssemblyVersion>
+    <Version>1.0.4.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

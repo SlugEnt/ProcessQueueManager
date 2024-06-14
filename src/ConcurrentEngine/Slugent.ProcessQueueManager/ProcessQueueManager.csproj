@@ -1,16 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
 	        <GenerateDocumentationFile>true</GenerateDocumentationFile>	  
     <Authors>Scott Herrmann</Authors>	  
-    <Version>0.2.0</Version>	  
+    <Version>1.0.4.0</Version>	  
     <Company>SlugEnt</Company>	  
     <Description>Provides multithreading task scheduling components</Description>	  
     <Copyright>Scott Herrmann 2021</Copyright>	  
     <RepositoryUrl>https://github.com/SlugEnt/ProcessQueueManager</RepositoryUrl>	  
     <RepositoryType>git</RepositoryType>	  
-    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>	  
+    <AssemblyName>SlugEnt.$(MSBuildProjectName)</AssemblyName>	  
+    <RootNamespace>SlugEnt.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
 
 	    
